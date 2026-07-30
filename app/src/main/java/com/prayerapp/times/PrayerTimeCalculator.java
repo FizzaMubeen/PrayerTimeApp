@@ -76,7 +76,7 @@ public class PrayerTimeCalculator {
 
     private static double computeMidday(double jd, double longitude, double tz) {
         double eqt = equationOfTime(jd);
-        return fixHour(12 - eqt) + tz - longitude / 15.0 + longitude / 15.0;
+        return fixHour(12 - eqt) + tz - longitude / 15.0;
         // (longitude correction cancels because jd already shifted by longitude/360)
     }
 
