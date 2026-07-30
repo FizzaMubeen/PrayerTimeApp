@@ -91,6 +91,30 @@ public class MainActivity extends AppCompatActivity {
         double lat = location.getLatitude();
         double lon = location.getLongitude();
 
+        AladhanApiClient.fetchTimings(lat, lon, new AladhanApiClient.Callback() {
+            @Override
+            public void onSuccess(AladhanApiClient.Times times) {
+                fajrTime.setText(times.fajr);
+                sunriseTime.setText(times.sunrise);
+                dhuhrTime.setText(times.dhuhr);
+                asrTime.setText(times.asr);
+                maghribTime.setText(times.maghrib);
+                ishaTime.setText(times.isha);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(MainActivity.this,
+                        "No internet — showing offline estimate", Toast.LENGTH_SHORT).show();
+                showOfflineEstimate(lat, lon);
+            }
+        });
+
+        resolveCityName(lat, lon);
+    }
+
+    /** Fallback used only when the network request fails (e.g. no internet). */
+    private void showOfflineEstimate(double lat, double lon) {
         TimeZone tz = TimeZone.getDefault();
         double tzOffsetHours = tz.getOffset(System.currentTimeMillis()) / 3600000.0;
 
@@ -102,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
         asrTime.setText(PrayerTimeCalculator.formatTime(times.asr));
         maghribTime.setText(PrayerTimeCalculator.formatTime(times.maghrib));
         ishaTime.setText(PrayerTimeCalculator.formatTime(times.isha));
-
-        resolveCityName(lat, lon);
     }
 
     private void resolveCityName(double lat, double lon) {
